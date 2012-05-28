@@ -10,9 +10,19 @@ ParticleTree::ParticleTree(TString filename)
 	part_id = ev_id = 0;
 }
 
+void ParticleTree::SetEvid(UInt_t eid)
+{
+	ev_id = eid;
+}
+
 void ParticleTree::BeginEvent()
 {
 	event->SetEid(++ev_id);
+}
+
+void ParticleTree::BeginEvent(UInt_t eid)
+{
+	event->SetEid(eid);
 }
 
 UInt_t ParticleTree::Check()

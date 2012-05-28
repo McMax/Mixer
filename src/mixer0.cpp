@@ -40,63 +40,97 @@ int main(int argc, char **argv)
 
 	const Long64_t treeNentries = input_tree->GetEntries();
 	Long64_t ev;
+	UInt_t part;
 	UInt_t Npart;
 
-	vector<Long64_t> events_vect;
+	vector<UInt_t> events_vect;
+	vector<UInt_t> particles_vect;
 	vector<UInt_t> mult_vect;
+	map<UInt_t,unsigned> events_map;
 
 	TRandom2 randgen(time(NULL));
 
 	for(ev=0; ev<treeNentries; ++ev)
 	{
 		input_tree->GetEntry(ev);
-		events_vect.push_back(ev);
+		events_map.insert(pair<UInt_t,unsigned>(event->GetEid(),ev));
 		
 		Npart = event->GetNpa();
 		mult_vect.push_back(Npart);
+		for(part = 0; part<Npart; ++part)
+		{
+			particle = event->GetParticle(part);
+			events_vect.push_back(event->GetEid());
+			particles_vect.push_back(particle->GetPid());
+		}
 		if(!(ev%50000))
 			cout << "Event: " << ev << endl;
 	}
 
-	cout << "ParticleTree loaded. " << treeNentries << " events" << endl;
+	cout << "ParticleTree loaded. " << treeNentries << " events (" << ev << ")" <<  endl;
+	cout << "First EID: " << events_vect[0] << " | Last EID: " << events_vect[events_vect.size()-1] << endl;
+
+	const UInt_t firstPID = particles_vect[0];
+	const UInt_t lastPID = particles_vect[particles_vect.size()-1];
+	UInt_t list_size = lastPID - firstPID;
+
+	cout << "First PID: " << firstPID << " | last PID: " << lastPID << " | size: " << list_size << endl;
 
 	ParticleTree output_tree(outputfile);
 	set<int> unique_events_set;
 	unsigned control=0;
-	int rand_evid, rand_pid;
+	int rand_evid, rand_part;
+	unsigned int Nentries = events_map.size();
 
-	for(ev = 0; ev<events_vect.size(); ++ev)
+	for(ev = 0; ev<Nentries; ++ev)
 	{
 		unique_events_set.clear();
 		control = 0;
-		output_tree.BeginEvent();
+		input_tree->GetEntry(ev);
+		output_tree.BeginEvent(event->GetEid());
 
 		//cout << ev << ": multiplicity: " << mult_vect[ev] << endl;
 		for(int j=0; j<mult_vect[ev]; ) //number of part/event = MULTIP[i]
 		{
-			rand_evid = randgen.Rndm()*events_vect.size();
-			//cout << "rand_evid: " << rand_evid << endl;
-			unique_events_set.insert(events_vect[rand_evid]);
+			rand_part = randgen.Rndm()*particles_vect.size();;
+			//cout << "rand_part = " << rand_part << " = " << particles_vect[rand_part] << endl;
+
+			rand_evid = events_vect[rand_part];
+			//cout << "rand_evid = " << rand_evid << endl;
+
+			unique_events_set.insert(rand_evid);
+			//cout << "If" << endl;
 			if(unique_events_set.size()>control)
 			{
-			//	cout << "Getting event from tree" << endl;
-				input_tree->GetEntry(events_vect[rand_evid]);
-				rand_pid = randgen.Rndm()*mult_vect[rand_evid];
-			//	cout << "rand_pid: " << rand_pid << " getting particle" << endl;
-				particle = event->GetParticle(rand_pid);
-			//	cout << "Adding particle" << endl;
-			//	cout << "Pid: " << particle->GetPid() << " px: " << particle->GetPx() << endl;
-				output_tree.AddParticle(particle->GetPid(), particle->GetCharge(), particle->GetBx(), particle->GetBy(), particle->GetPx(), particle->GetPy(), particle->GetPz());
+				//cout << "Getting event from tree" << endl;
+				input_tree->GetEntry(events_map[rand_evid]);
+				
+				/*
+				cout << "Event in tree: " << event->GetEid() << endl;
+				cout << "Particles: " << endl;
+				for(int i=0; i<event->GetNpa(); i++)
+					cout << i << ": " << ((Particle*)event->GetParticle(i))->GetPid() << endl;
 
-				events_vect.erase(events_vect.begin()+rand_evid);
-				mult_vect.erase(mult_vect.begin()+rand_evid);
+				cout << "First particle in event: " << event->GetFirstParticle() << endl;
+				cout << "Getting particle: " << ((particles_vect[rand_part] - event->GetFirstParticle())) << endl;
+				*/
+				particle = event->GetParticle(particles_vect[rand_part] - event->GetFirstParticle());
+				/*
+				cout << "#Ev: " << ev << ", EVID: " << rand_evid << ", rand_part: " << particles_vect[rand_part] << endl;
+					cout << "Adding particle" << endl;
+					cout << "Pid: " << particles_vect[rand_part] << " px: " << particle->GetPx() << endl;
+				*/
+				output_tree.AddParticle(particles_vect[rand_part], particle->GetCharge(), particle->GetBx(), particle->GetBy(), particle->GetPx(), particle->GetPy(), particle->GetPz());
 
+				//cout << "Erasing particle with PID: " << particles_vect[rand_part] << endl;
+				events_vect.erase(events_vect.begin() + rand_part);
+				particles_vect.erase(particles_vect.begin() + rand_part);
 				++control;
 				j=j+1;
 			}
 			else
 			{
-				cout << "Rejected" << endl;
+				cout << "Rejected. Event: " << ev << " | from old event: " << rand_evid << endl;
 				continue;
 			}
 
@@ -105,10 +139,11 @@ int main(int argc, char **argv)
 		output_tree.EndEvent();
 
 		//cout << " | from different events: " << unique_events_set.size() << endl;
-		if(!(ev%50))
+		if(!(ev%100))
 			cout << ev << "/" << treeNentries << " multiplicity: "<< mult_vect[ev] << ", from diff. events: " << unique_events_set.size()<< endl;
 	}
 
+	cout << "Closing" << endl;
 	output_tree.Close();
 	input_root_file->Close();
 }

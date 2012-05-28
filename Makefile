@@ -1,8 +1,8 @@
 CC	= g++
 LD	= g++
 
-CCFLAGS = -g -O0 `root-config --cflags` -lEG -Wall -I./inc
-LDFLAGS = -g -O0 `root-config --libs` -lEG -Wall -L./lib
+CCFLAGS = -g -O0 `root-config --cflags` -Wall -I./inc
+LDFLAGS = -g -O0 `root-config --libs` -Wall -L./lib
 
 TOPDIR = .
 SRC_DIR = $(TOPDIR)/src

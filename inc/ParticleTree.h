@@ -19,7 +19,9 @@ class ParticleTree
 
 public:
 	ParticleTree(TString filename);
+	void SetEvid(UInt_t);
 	void BeginEvent();
+	void BeginEvent(UInt_t);
 	void EndEvent();
 	UInt_t Check();
 	void AddParticle(Short_t, Float_t, Float_t, Float_t, Float_t, Float_t);
