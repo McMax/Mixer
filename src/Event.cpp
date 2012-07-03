@@ -8,7 +8,7 @@ Event::Event()
 {
 	fEid = 0;
 	fParticles = new TClonesArray("Particle",15);
-	fNpa = 0;
+	fNpa = fNneg = fNpos = 0;
 	fFirstParticle = 0;
 }
 
@@ -16,7 +16,7 @@ Event::Event(UInt_t eid)
 {
 	fEid = eid;
 	fParticles = new TClonesArray("Particle",15);
-	fNpa = 0;
+	fNpa = fNneg = fNpos = 0;
 	fFirstParticle = 0;
 }
 
@@ -44,9 +44,10 @@ void Event::AddParticle(UInt_t pid, Short_t charge, Float_t bx, Float_t by, Floa
 {
 	if(fFirstParticle == 0)
 		fFirstParticle = pid;
-	
+
 	new ((*fParticles) [fNpa]) Particle(pid, charge, bx, by, px, py, pz);
 	fNpa++;
+	(charge < 0) ? (fNneg++) : (fNpos++);
 }
 
 void Event::AddParticle(const Particle& particle)
@@ -56,18 +57,13 @@ void Event::AddParticle(const Particle& particle)
 
 	new ((*fParticles) [fNpa]) Particle(particle);
 	fNpa++;
+	(particle.GetCharge() < 0) ? (fNneg++) : (fNpos++);
 }
 
 void Event::Clear()
 {
 	fParticles->Clear();
-	fNpa = 0;
-}
-
-void Event::RemoveAt(Int_t index)
-{
-	fParticles->RemoveAt(index);
-	fParticles->Compress();
+	fNpa = fNneg = fNpos = 0;
 }
 
 ClassImp(Event);
