@@ -70,6 +70,7 @@ int main(int argc, char **argv)
 	cout << "ParticleTree loaded. " << treeNentries << " events (" << ev << ")" <<  endl;
 	cout << "First EID: " << events_vect[0] << " | Last EID: " << events_vect[events_vect.size()-1] << endl;
 
+
 	const UInt_t firstPID = particles_vect[0];
 	const UInt_t lastPID = particles_vect[particles_vect.size()-1];
 	UInt_t list_size = lastPID - firstPID;
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
 		//cout << ev << ": multiplicity: " << mult_vect[ev] << endl;
 		for(int j=0; j<mult_vect[ev]; ) //number of part/event = MULTIP[i]
 		{
-			rand_part = randgen.Rndm()*particles_vect.size();;
+			rand_part = randgen.Rndm()*particles_vect.size();
 			//cout << "rand_part = " << rand_part << " = " << particles_vect[rand_part] << endl;
 
 			rand_evid = events_vect[rand_part];
@@ -118,7 +119,8 @@ int main(int argc, char **argv)
 				/*
 				cout << "#Ev: " << ev << ", EVID: " << rand_evid << ", rand_part: " << particles_vect[rand_part] << endl;
 					cout << "Adding particle" << endl;
-					cout << "Pid: " << particles_vect[rand_part] << " px: " << particle->GetPx() << endl;
+					cout << "Pid: " << particles_vect[rand_part];
+					cout << " px: " << particle->GetPx() << endl;
 				*/
 				output_tree.AddParticle(particles_vect[rand_part], particle->GetCharge(), particle->GetBx(), particle->GetBy(), particle->GetPx(), particle->GetPy(), particle->GetPz());
 

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "TObject.h"
 #include "TClonesArray.h"
 
@@ -29,7 +31,10 @@ Event::~Event()
 Particle* Event::GetParticle(UInt_t index) const
 {
 	if((index < 0) || (index >= fNpa))
+	{
+		std::cout << "Particle:: does not exist! Index: " << index << " Npa: " << fNpa << std::endl;
 		return NULL;
+	}
 
 	return ((Particle*) fParticles->At(index));
 }
