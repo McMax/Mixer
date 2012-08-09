@@ -60,6 +60,8 @@ int main(int argc, char **argv)
 		for(part = 0; part<Npart; ++part)
 		{
 			particle = event->GetParticle(part);
+			if((TMath::Abs(particle->GetBx()) > 4) || (TMath::Abs(particle->GetBy()) > 2))
+				continue;
 			events_vect.push_back(event->GetEid());
 			particles_vect.push_back(particle->GetPid());
 		}
@@ -148,4 +150,6 @@ int main(int argc, char **argv)
 	cout << "Closing" << endl;
 	output_tree.Close();
 	input_root_file->Close();
+
+	return 0;
 }
