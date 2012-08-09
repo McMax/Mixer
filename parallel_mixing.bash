@@ -1,0 +1,1 @@
+../Testy_z_danymi/corrs2mult/testing.bash
