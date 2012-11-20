@@ -84,6 +84,10 @@ int main(int argc, char **argv)
 	unsigned control=0;
 	int rand_evid, rand_part;
 	unsigned int Nentries = events_map.size();
+	unsigned long 	switch_counter=0,
+					switch_limit = Nentries*Nentries;
+
+	bool event_cancelled = false;
 
 	for(ev = 0; ev<Nentries; ++ev)
 	{
@@ -91,6 +95,9 @@ int main(int argc, char **argv)
 		control = 0;
 		input_tree->GetEntry(ev);
 		output_tree.BeginEvent(event->GetEid());
+
+		switch_counter = 0;
+		event_cancelled = false;
 
 		//cout << ev << ": multiplicity: " << mult_vect[ev] << endl;
 		for(int j=0; j<mult_vect[ev]; ) //number of part/event = MULTIP[i]
@@ -134,16 +141,26 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				cout << "Rejected. Event: " << ev << " | from old event: " << rand_evid << endl;
+				if(switch_counter > switch_limit)
+				{
+					event_cancelled = true;
+					break;
+				}
+
+				if(!(++switch_counter%Nentries))
+					cout << "Rejected. Event: " << ev << " | from old event: " << rand_evid << " ctr:" << switch_counter << "/" << switch_limit << endl;
 				continue;
 			}
 
 		}  //track loop
 
-		output_tree.EndEvent();
+		if(event_cancelled)
+			output_tree.CancelEvent();
+		else
+			output_tree.EndEvent();
 
 		//cout << " | from different events: " << unique_events_set.size() << endl;
-		if(!(ev%100))
+		//if(!(ev%100))
 			cout << ev << "/" << treeNentries << " multiplicity: "<< mult_vect[ev] << ", from diff. events: " << unique_events_set.size()<< endl;
 	}
 

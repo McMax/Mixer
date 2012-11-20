@@ -38,6 +38,11 @@ void ParticleTree::EndEvent()
 	event->Clear();
 }
 
+void ParticleTree::CancelEvent()
+{
+	event->Clear();
+}
+
 void ParticleTree::AddParticle(Short_t charge, Float_t bx, Float_t by,  Float_t px, Float_t py, Float_t pz)
 {
 	event->AddParticle(++part_id, charge, bx, by, px, py, pz);
