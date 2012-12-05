@@ -25,8 +25,8 @@ public:
 	void EndEvent();
 	void CancelEvent();
 	UInt_t Check();
-	void AddParticle(Short_t, Float_t, Float_t, Float_t, Float_t, Float_t);
-	void AddParticle(UInt_t, Short_t, Float_t, Float_t, Float_t, Float_t, Float_t);
+	void AddParticle(Short_t, Float_t, Float_t, Float_t, Float_t, Float_t, Float_t);
+	void AddParticle(UInt_t, Short_t, Float_t, Float_t, Float_t, Float_t, Float_t, Float_t);
 	void Close();
 	virtual ~ParticleTree();
 };

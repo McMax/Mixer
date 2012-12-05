@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 					cout << "Pid: " << particles_vect[rand_part];
 					cout << " px: " << particle->GetPx() << endl;
 				*/
-				output_tree.AddParticle(particles_vect[rand_part], particle->GetCharge(), particle->GetBx(), particle->GetBy(), particle->GetPx(), particle->GetPy(), particle->GetPz());
+				output_tree.AddParticle(particles_vect[rand_part], particle->GetCharge(), particle->GetBx(), particle->GetBy(), particle->GetPx(), particle->GetPy(), particle->GetPz(), particle->GetdEdx());
 
 				//cout << "Erasing particle with PID: " << particles_vect[rand_part] << endl;
 				events_vect.erase(events_vect.begin() + rand_part);

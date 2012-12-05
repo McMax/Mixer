@@ -12,10 +12,11 @@ class Particle : public TObject
 	Float_t fPx;		//Particle momentum on X-axis
 	Float_t fPy;		//Particle momentum on Y-axis
 	Float_t fPz;		//Particle momentum on Z-axis
+	Float_t fdEdx;
 
 public:
 	Particle();
-	Particle(UInt_t, Short_t, Float_t, Float_t, Float_t, Float_t, Float_t);
+	Particle(UInt_t, Short_t, Float_t, Float_t, Float_t, Float_t, Float_t, Float_t);
 	virtual ~Particle();
 
 	inline UInt_t GetPid() const { return fPid;}
@@ -25,6 +26,7 @@ public:
 	inline Float_t GetPx() const { return fPx;}
 	inline Float_t GetPy() const { return fPy;}
 	inline Float_t GetPz() const { return fPz;}
+	inline Float_t GetdEdx() const { return fdEdx;}
 	
 	inline void SetPid(UInt_t pid) { fPid = pid;}
 	inline void SetCharge(Short_t charge) { fCharge = charge;}
@@ -33,6 +35,7 @@ public:
 	inline void SetPx(Float_t px) { fPx = px;}
 	inline void SetPy(Float_t py) { fPy = py;}
 	inline void SetPz(Float_t pz) { fPz = pz;}
+	inline void SetdEdx(Float_t dedx) { fdEdx = dedx;}
 
 	ClassDef(Particle,1);
 };

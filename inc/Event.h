@@ -28,7 +28,7 @@ class Event : public TObject
 
 	inline void SetEid(UInt_t eid) { fEid = eid;}
 
-	void AddParticle(UInt_t, Short_t, Float_t, Float_t, Float_t, Float_t, Float_t);
+	void AddParticle(UInt_t, Short_t, Float_t, Float_t, Float_t, Float_t, Float_t, Float_t);
 	void AddParticle(const Particle&);
 	void Clear();
 
