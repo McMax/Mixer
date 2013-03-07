@@ -1,45 +1,37 @@
 CC	= g++
 LD	= g++
 
-CCFLAGS = `root-config --cflags` -Wall -I$(INC_DIR) -I${T61}/T61DST/inc
-LDFLAGS = `root-config --libs --ldflags` -Wall -L./lib -L${NA49_LIB} -lT61DST 
+CCFLAGS = `root-config --cflags` -Wall -I$(INC_DIR) -I$(PEV_INC) -I${T61}/T61DST/inc
+LDFLAGS = `root-config --libs --ldflags` -Wall -L./lib -L$(PEV_LIB) -L${NA49_LIB} -lT61DST 
 
 TOPDIR = .
 SRC_DIR = $(TOPDIR)/src
 OBJ_DIR = $(TOPDIR)/lib
 INC_DIR = $(TOPDIR)/inc
 
-PROGRAM = mixer0
+PEV_DIR = $(TOPDIR)/../Particle_Event
+PEV_LIB = $(PEV_DIR)/lib
+PEV_SRC = $(PEV_DIR)/src
+PEV_INC = $(PEV_DIR)/inc
 
 SOURCES := $(shell find $(SRC_DIR) -type f -name "*.cpp")
 OBJECTS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
-INCLUDES := inc/Particle.h inc/Event.h inc/ParticleTree.h inc/linkdef.h
+PEV_OBJECTS = $(PEV_LIB)/Particle.o $(PEV_LIB)/Event.o $(PEV_LIB)/ParticleTree.o $(PEV_LIB)/Dict.o
 
-all: $(PROGRAM) splitter
+all: mixer0 splitter
 
-splitter: split/splitter.o
+splitter: $(OBJ_DIR)/splitter.o
 	$(LD) $(LDFLAGS) $< -o $@ 
 
-split/splitter.o: split/splitter.cpp
-	$(CC) -c $(CCFLAGS) $< -o $@ 
-
-$(PROGRAM): $(OBJECTS) Dict.o
+mixer0: $(OBJ_DIR)/mixer0.o $(PEV_OBJECTS)
 	$(LD) $(LDFLAGS) $^ -o $@ 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(OBJ_DIR)
 	$(CC) -c $(CCFLAGS) $< -o $@ 
 
-Dict.o: Dict.cpp
-	$(CC) -c $(CCFLAGS) Dict.cpp -o Dict.o
-
-Dict.cpp: $(INCLUDES)
-	@echo "Generating dictionary..."
-	@rootcint -f Dict.cpp -c -P -I$(ROOTSYS) -I/usr/local/include $(INCLUDES)
-
+$(PEV_OBJECTS):
+	@echo "No base libs. Create them"
+	
 clean:
-	@rm -rf $(PROGRAM) ./lib	
-	@rm -f splitter split/splitter.o
-
-realclean: clean
-	@rm -f Dict.*
+	@rm -rf mixer0 splitter ./lib	
