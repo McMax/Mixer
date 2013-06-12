@@ -15,11 +15,9 @@ mix()
 {
 	for el in ${ITER[@]}
 	do
-		echo "gnome-terminal -x ./mixer0 ${NUMBERS[$el]}"
-		gnome-terminal -x ./mixer0 ${NUMBERS[$el]}
+		echo "gnome-terminal -x ../../mixer ${NUMBERS[$el]}"
+		gnome-terminal -x ../../mixer ${NUMBERS[$el]}
 	done
-
-	sleep 3
 
 	FILE1=${MIXEDFILES[${ITER[0]}]}
 	FILE2=${MIXEDFILES[${ITER[1]}]}
@@ -29,33 +27,40 @@ mix()
 	echo "FILE2: $FILE2"
 	echo "FILE3: $FILE3"
 
+	sleep 3
+
+	echo -e "FILE1\tFILE2\tFILE3"
+
 	while [ ! `find -name "file?" | wc -l` -eq 3 ]
 	do
+		echo -ne "\r\E[K"
 		if [ -z `lsof +d . | grep $FILE1 | awk '{print $9}'` ]
 		then
-			echo "File1 closed"
+			echo -ne "\e[00;32mClosed\e[00m"
 			touch file1
 		else
-			echo "File1 opened"
+			echo -ne "\e[00;31mOpened\e[00m"
 		fi
 		if [ -z `lsof +d . | grep $FILE2 | awk '{print $9}'` ]
 		then
-			echo "File2 closed"
+			echo -ne "\t\e[00;32mClosed\e[00m"
 			touch file2
 		else
-			echo "File2 opened"
+			echo -ne "\t\e[00;31mOpened\e[00m"
 		fi
 
 		if [ -z `lsof +d . | grep $FILE3 | awk '{print $9}'` ]
 		then
-			echo "File3 closed"
+			echo -ne "\t\e[00;32mClosed\e[00m"
 			touch file3
 		else
-			echo "File3 opened"
+			echo -ne "\t\e[00;31mOpened\e[00m"
 		fi
 
 			sleep 3
 	done
+
+	echo ""
 
 	rm file1 file2 file3
 }
@@ -64,12 +69,6 @@ for i in ${NUMBERS[@]}
 do
 	FILES=( "${FILES[@]}" "file${NUMBERS[$i]}" )
 	MIXEDFILES=( "${MIXEDFILES[@]}" "MixedParticleTree${NUMBERS[$i]}.root" )
-done
-
-for i in ${NUMBERS[@]}
-do
-	echo "$i: ${FILES[$i]}"
-	echo "${MIXEDFILES[$i]}"
 done
 
 ITER=(0 1 2)
