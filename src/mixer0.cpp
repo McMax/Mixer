@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 	TTree* input_tree = (TTree*)input_root_file->Get("events");
 
 	Event *event = new Event();
-	Particle *particle;
+	Particle *particle, new_particle;
 	input_tree->SetBranchAddress("event",&event);
 
 	const Long64_t treeNentries = input_tree->GetEntries();
@@ -131,11 +131,16 @@ int main(int argc, char **argv)
 					cout << "Pid: " << particles_vect[rand_part];
 					cout << " px: " << particle->GetPx() << endl;
 				*/
-				output_tree.AddParticle(
-						particles_vect[rand_part], particle->GetCharge(), particle->GetBx(), particle->GetBy(), 
-						particle->GetPx(), particle->GetPy(), particle->GetPz(), 
-						particle->GetdEdx(), particle->GetdEdxVtpc1(), particle->GetdEdxVtpc2(), particle->GetdEdxMtpc(),
-						particle->GetNdEdx(), particle->GetNdEdxVtpc1(), particle->GetNdEdxVtpc2(), particle->GetNdEdxMtpc());
+				new_particle.SetPid(particles_vect[rand_part]);
+				new_particle.SetCharge(particle->GetCharge());
+				new_particle.SetBpar(particle->GetBx(),particle->GetBy());
+				new_particle.SetP(particle->GetPx(),particle->GetPx(),particle->GetPz());
+				new_particle.Setdedx(particle->GetdEdx(),particle->GetdEdxVtpc1(),particle->GetdEdxVtpc2(),particle->GetdEdxMtpc());
+				new_particle.SetNdedx(particle->GetNdEdx(),particle->GetNdEdxVtpc1(),particle->GetNdEdxVtpc2(),particle->GetNdEdxMtpc());
+				new_particle.SetVTPC1points(particle->GetVTPC1_Sx(),particle->GetVTPC1_Sy(),particle->GetVTPC1_Ex(),particle->GetVTPC1_Ey());
+				new_particle.SetVTPC2points(particle->GetVTPC2_Sx(),particle->GetVTPC2_Sy(),particle->GetVTPC2_Ex(),particle->GetVTPC2_Ey());
+				new_particle.SetMTPCpoints(particle->GetMTPC_Sx(),particle->GetMTPC_Sy(),particle->GetMTPC_Ex(),particle->GetMTPC_Ey());
+				output_tree.AddParticle(new_particle);
 
 				//cout << "Erasing particle with PID: " << particles_vect[rand_part] << endl;
 				events_vect.erase(events_vect.begin() + rand_part);
