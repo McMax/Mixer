@@ -9,7 +9,7 @@ SRC_DIR = $(TOPDIR)/src
 OBJ_DIR = $(TOPDIR)/lib
 INC_DIR = $(TOPDIR)/inc
 
-PEV_DIR = $(TOPDIR)/../Particle_Event
+PEV_DIR = $(TOPDIR)/../Particle_Event_PbPb
 PEV_LIB = $(PEV_DIR)/lib
 PEV_SRC = $(PEV_DIR)/src
 PEV_INC = $(PEV_DIR)/inc
