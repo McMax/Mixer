@@ -164,7 +164,7 @@ int main(int argc, char **argv)
 			output_tree.EndEvent();
 
 		//cout << " | from different events: " << unique_events_set.size() << endl;
-		//if(!(ev%100))
+		if(!(ev%500))
 			cout << ev << "/" << treeNentries << " multiplicity: "<< mult_vect[ev] << ", from diff. events: " << unique_events_set.size()<< endl;
 	}
 

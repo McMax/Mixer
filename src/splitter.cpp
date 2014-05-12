@@ -1,12 +1,14 @@
 #include <iostream>
 #include <cstdlib>
 
+#include "TApplication.h"
 #include "TFile.h"
 #include "TTree.h"
+#include "TString.h"
 
 using namespace std;
 
-void split(const TString path, Int_t divider)
+int split(const TString path, Int_t divider)
 {
 	TString filename = path;
 	UInt_t pozycja1 = path.Last('/');
@@ -19,14 +21,22 @@ void split(const TString path, Int_t divider)
 	if(file_to_split->IsZombie())
 	{
 		cout << "File " << file_to_split << " is not opened" << endl;
-		return;
+		return -1;
 	}
 	TFile *newfile;
 	TTree *new_input_tree;
 	TString temp;
 
 	TTree* input_tree = (TTree*)file_to_split->Get("events");
-	Int_t nentries_divider = input_tree->GetEntries()/divider;
+	Int_t nentries = input_tree->GetEntries();
+
+	if(nentries==0)
+	{
+		cout << "Particle tree has no events. Stopping..." << endl;
+		return 1;
+	}
+
+	Int_t nentries_divider = nentries/divider;
 
 	for(int i=0; i<divider; i++)
 	{
@@ -43,6 +53,8 @@ void split(const TString path, Int_t divider)
 	}
 
 	file_to_split->Close();
+
+	return 1;
 }
 
 int main(int argc, char* argv[])
@@ -52,6 +64,9 @@ int main(int argc, char* argv[])
 		cout << "Usage: splitter <BASE_FILE> <NUMBER_OF_FILES>" << endl;
 		return 0;
 	}
-	split(argv[1], atoi(argv[2]));
+	TApplication app("app",&argc,argv);
+	int signal = split(app.Argv(1), atoi(app.Argv(2)));
+
+	return signal;
 }
 
