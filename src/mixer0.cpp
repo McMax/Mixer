@@ -15,6 +15,7 @@
 
 using namespace std;
 
+//Particles mixer. Careful, magic is done here...
 int main(int argc, char **argv)
 {
 	if(argc < 2)
@@ -60,8 +61,6 @@ int main(int argc, char **argv)
 		for(part = 0; part<Npart; ++part)
 		{
 			particle = event->GetParticle(part);
-			if((TMath::Abs(particle->GetBx()) > 4) || (TMath::Abs(particle->GetBy()) > 2))
-				continue;
 			events_vect.push_back(event->GetEid());
 			particles_vect.push_back(particle->GetPid());
 		}
@@ -89,6 +88,7 @@ int main(int argc, char **argv)
 
 	bool event_cancelled = false;
 
+//Magic starts here
 	for(ev = 0; ev<Nentries; ++ev)
 	{
 		unique_events_set.clear();
@@ -99,45 +99,24 @@ int main(int argc, char **argv)
 		switch_counter = 0;
 		event_cancelled = false;
 
-		//cout << ev << ": multiplicity: " << mult_vect[ev] << endl;
-		for(int j=0; j<mult_vect[ev]; ) //number of part/event = MULTIP[i]
+		for(int j=0; j<mult_vect[ev]; )
 		{
 			rand_part = randgen.Rndm()*particles_vect.size();
-			//cout << "rand_part = " << rand_part << " = " << particles_vect[rand_part] << endl;
 
 			rand_evid = events_vect[rand_part];
-			//cout << "rand_evid = " << rand_evid << endl;
 
 			unique_events_set.insert(rand_evid);
-			//cout << "If" << endl;
 			if(unique_events_set.size()>control)
 			{
-				//cout << "Getting event from tree" << endl;
 				input_tree->GetEntry(events_map[rand_evid]);
 				
-				/*
-				cout << "Event in tree: " << event->GetEid() << endl;
-				cout << "Particles: " << endl;
-				for(int i=0; i<event->GetNpa(); i++)
-					cout << i << ": " << ((Particle*)event->GetParticle(i))->GetPid() << endl;
-
-				cout << "First particle in event: " << event->GetFirstParticle() << endl;
-				cout << "Getting particle: " << ((particles_vect[rand_part] - event->GetFirstParticle())) << endl;
-				*/
 				particle = event->GetParticle(particles_vect[rand_part] - event->GetFirstParticle());
-				/*
-				cout << "#Ev: " << ev << ", EVID: " << rand_evid << ", rand_part: " << particles_vect[rand_part] << endl;
-					cout << "Adding particle" << endl;
-					cout << "Pid: " << particles_vect[rand_part];
-					cout << " px: " << particle->GetPx() << endl;
-				*/
 				output_tree.AddParticle(
 						particles_vect[rand_part], particle->GetCharge(), particle->GetBx(), particle->GetBy(), 
 						particle->GetPx(), particle->GetPy(), particle->GetPz(), 
 						particle->GetdEdx(), particle->GetdEdxVtpc1(), particle->GetdEdxVtpc2(), particle->GetdEdxMtpc(),
 						particle->GetNdEdx(), particle->GetNdEdxVtpc1(), particle->GetNdEdxVtpc2(), particle->GetNdEdxMtpc());
 
-				//cout << "Erasing particle with PID: " << particles_vect[rand_part] << endl;
 				events_vect.erase(events_vect.begin() + rand_part);
 				particles_vect.erase(particles_vect.begin() + rand_part);
 				++control;
@@ -156,14 +135,14 @@ int main(int argc, char **argv)
 				continue;
 			}
 
-		}  //track loop
+		}
+//Magic ends here
 
 		if(event_cancelled)
 			output_tree.CancelEvent();
 		else
 			output_tree.EndEvent();
 
-		//cout << " | from different events: " << unique_events_set.size() << endl;
 		if(!(ev%500))
 			cout << ev << "/" << treeNentries << " multiplicity: "<< mult_vect[ev] << ", from diff. events: " << unique_events_set.size()<< endl;
 	}

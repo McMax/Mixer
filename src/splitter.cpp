@@ -46,7 +46,7 @@ void findFactors(int entries, vector<int> &primeNumbers, vector<int> &primeFacto
 		if((entries%current)==0)
 		{
 			primeFactors.push_back(current);
-			findFactors(entries/current,primeNumbers,primeFactors);
+			findFactors(entries/current,primeNumbers,primeFactors);	//To understand recurrence, you must firstly understand recurrence
 			break;
 		}
 	}
@@ -165,6 +165,9 @@ int optimal_split(const TString path)
 	return split(path, divider);
 }
 
+//Splitter divides big ParticleTree file into a given number of files to let them mix in parallel.
+//If one divides the number of all events in wrong way, there will be some rest events that will not get into the smaller ParticleTrees.
+//That is why an "optimal_split" function was written to choose the divider which minimize or get rid of rest events.
 int main(int argc, char* argv[])
 {
 	int signal = -1;
@@ -182,7 +185,7 @@ int main(int argc, char* argv[])
 	else
 	{
 		cout << "Usage: splitter <BASE_FILE> <NUMBER_OF_FILES>\nor" << endl;
-		cout << "splitter <BASE_FILE> with option of calculating prime factors" << endl;
+		cout << "splitter <BASE_FILE> - will calculate modulo table and let you choose the divider" << endl;
 		return 0;
 	}
 
