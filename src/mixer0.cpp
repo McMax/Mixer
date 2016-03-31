@@ -84,12 +84,15 @@ int main(int argc, char **argv)
 	int rand_evid, rand_part;
 	unsigned int Nentries = events_map.size();
 	unsigned long 	switch_counter=0,
-					switch_limit = Nentries*Nentries;
+					//switch_limit = Nentries*Nentries;
+					switch_limit = Nentries;
 
 	bool event_cancelled = false;
 
 //Magic starts here
-	for(ev = 0; ev<Nentries; ++ev)
+
+	unsigned int output_entries = particles_vect.size()/5;
+	for(ev = 0; ev<output_entries; ++ev)
 	{
 		unique_events_set.clear();
 		control = 0;
@@ -99,7 +102,9 @@ int main(int argc, char **argv)
 		switch_counter = 0;
 		event_cancelled = false;
 
-		for(int j=0; j<mult_vect[ev]; )
+		//for(int j=0; j<mult_vect[ev]; )
+		if(mult_vect[ev]==0) continue;
+		for(int j=0; j<5; )
 		{
 			rand_part = randgen.Rndm()*particles_vect.size();
 
@@ -139,7 +144,10 @@ int main(int argc, char **argv)
 //Magic ends here
 
 		if(event_cancelled)
+		{
 			output_tree.CancelEvent();
+			break;
+		}
 		else
 			output_tree.EndEvent();
 
