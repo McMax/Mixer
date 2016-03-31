@@ -21,11 +21,10 @@ PEV_OBJECTS = $(PEV_LIB)/Particle.o $(PEV_LIB)/Event.o $(PEV_LIB)/ParticleTree.o
 all: mixer0 splitter
 
 splitter: $(OBJ_DIR)/splitter.o
-	#$(LD) -o $@ $< $(LDFLAGS2)
-	$(LD) -o $@ $< $(LDFLAGS)	#PRAWIE Dobre
+	$(LD) -o $@ $< $(LDFLAGS)
 
 mixer0: $(OBJ_DIR)/mixer0.o $(PEV_OBJECTS)
-	$(LD) -o $@ $^ $(LDFLAGS)	#Dobre
+	$(LD) -o $@ $^ $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(OBJ_DIR)
