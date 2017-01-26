@@ -111,11 +111,7 @@ int main(int argc, char **argv)
 				input_tree->GetEntry(events_map[rand_evid]);
 				
 				particle = event->GetParticle(particles_vect[rand_part] - event->GetFirstParticle());
-				output_tree.AddParticle(
-						particles_vect[rand_part], particle->GetCharge(), particle->GetBx(), particle->GetBy(), 
-						particle->GetPx(), particle->GetPy(), particle->GetPz(), 
-						particle->GetdEdx(), particle->GetdEdxVtpc1(), particle->GetdEdxVtpc2(), particle->GetdEdxMtpc(),
-						particle->GetNdEdx(), particle->GetNdEdxVtpc1(), particle->GetNdEdxVtpc2(), particle->GetNdEdxMtpc());
+				output_tree.AddParticle(*particle, particles_vect[rand_part]);
 
 				events_vect.erase(events_vect.begin() + rand_part);
 				particles_vect.erase(particles_vect.begin() + rand_part);
