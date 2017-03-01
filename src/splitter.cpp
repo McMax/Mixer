@@ -65,7 +65,7 @@ int split(const TString path, Int_t divider)
 	if(file_to_split->IsZombie())
 	{
 		cout << "File " << file_to_split << " is not opened" << endl;
-		return -1;
+		return 1;
 	}
 	TFile *newfile;
 	TTree *new_input_tree;
@@ -77,7 +77,7 @@ int split(const TString path, Int_t divider)
 	if(nentries==0)
 	{
 		cout << "Particle tree has no events. Stopping..." << endl;
-		return 1;
+		return 2;
 	}
 
 	Int_t nentries_divider = nentries/divider;
@@ -98,7 +98,7 @@ int split(const TString path, Int_t divider)
 
 	file_to_split->Close();
 
-	return 1;
+	return 0;
 }
 
 void create_modulo_table(int entries)
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
 	{
 		cout << "Usage: splitter <BASE_FILE> <NUMBER_OF_FILES>\nor" << endl;
 		cout << "splitter <BASE_FILE> - will calculate modulo table and let you choose the divider" << endl;
-		return 0;
+		return -1;
 	}
 
 	return signal;
