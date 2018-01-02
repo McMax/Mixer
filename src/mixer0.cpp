@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 			events_vect.push_back(event->GetEid());
 			particles_vect.push_back(particle->GetPid());
 		}
-		if(!(ev%50000))
+		if(!(ev%5000))
 			cout << "Event: " << ev << endl;
 	}
 
