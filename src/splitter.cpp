@@ -103,7 +103,7 @@ int split(const TString path, Int_t divider)
 
 void create_modulo_table(int entries)
 {
-	int start = 0, end = 70;
+	int start = 0, end = 100;
 	cout << "Table of modulo divisions" << endl;
 
 	cout << "#\t";
